@@ -1047,7 +1047,7 @@ if __name__ == '__main__':
 
     print(f'Loading dataset {args.dataset_member} and {args.dataset_nonmember}...')
     # data, seq_lens, n_samples = generate_data(args.dataset_member,args.dataset_member_key)
-    
+    #member is swa, eng and non member is swa-new, eng-new 
     data_member = generate_data(args.dataset_member,args.dataset_member_key)
     data_nonmember  = generate_data( args.dataset_nonmember,  args.dataset_nonmember_key,train=False) 
 
