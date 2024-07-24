@@ -23,9 +23,9 @@ source /exports/eddie/scratch/s2605274/miniconda3/etc/profile.d/conda.sh
 cd /exports/eddie/scratch/s2605274/besties_mia/
 #conda remove --name extract --all
 
-# conda create -n pythia python=3.9 
+conda create -n mia-n python=3.9 
 
-conda activate myenv
+conda activate mia-n
 
 pip install -r requirements.txt
 # Run the main script
