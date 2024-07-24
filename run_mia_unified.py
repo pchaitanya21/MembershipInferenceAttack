@@ -17,7 +17,7 @@ import custom_datasets
 from multiprocessing.pool import ThreadPool
 import time
 import math
-
+from datasets import load_dataset
 
 torch.manual_seed(0)
 np.random.seed(0)
@@ -699,24 +699,64 @@ def generate_samples(raw_data_member, raw_data_non_member, batch_size):
 
     return data, seq_lens, n_samples
 
+def parse_pilecorpus(path):
+    """
+    Quick and ugly parsing of a WET file.
+    Tested for the May 2021 crawl.
+    """
+    all_texts = ""
+    dataset = load_dataset("ArmelR/the-pile-splitted", "Pile-CC", streaming=True)
+    shuffled_dataset = dataset['train'].shuffle(seed=42)  # Shuffle the 'train' split
+
+    # Use 'skip' and 'take' on the individual dataset
+    dataset_head = shuffled_dataset.skip(0).take(10000)
+    
+    for text in dataset_head:
+        all_texts += text['text']
+    
+    return all_texts
+
+def parse_swahili(path):
+    file_content=""
+    chunk_size = 10 * 1024 * 1024  # 10 MB
+
+    try:
+        # Open the file in read mode
+        with open(path, 'r', encoding='utf-8') as file:
+            while True:
+                # Read the next chunk from the file
+                chunk = file.read(chunk_size)
+                if not chunk:
+                    break  # End of file reached
+                # Append the chunk to the file content string
+                file_content += chunk
+        print("File read successfully.")
+    except FileNotFoundError:
+        print(f"The file at {path} was not found.")
+    except IOError as e:
+        print(f"An error occurred while reading the file at {path}: {e}")
+    
+    return file_content
+#edit for own dataset implementation.
 
 def generate_data(dataset,key,train=True):
     # load data
     data_split = 'train' if train else 'test'
-    if dataset in custom_datasets.DATASETS:
-        data = custom_datasets.load(dataset, cache_dir)
-    elif dataset == 'the_pile' and data_split=='train':
+    if dataset =='swa':
+        data= parse_swahili('swa_sample.txt')
+    elif dataset == 'eng':
         #data_files = "https://www.cs.cmu.edu/~enron/enron_mail_20150507.tar.gz"
         #data_files="/home/niloofar/projects/enron_mail_20150507.tar.gz"
         #data_files ="/home/niloofar/projects/maildir"
         #data = datasets.load_dataset("json", data_files=data_files, split="train", cache_dir=cache_dir)[key]
         #data = datasets.load_dataset("json",data_files=data_files, split='train', cache_dir=cache_dir)[key]https://the-eye.eu/public/AI/pile/train/00.jsonl.zst"
-        data = datasets.load_dataset("json", data_files="/trunk/datasets/niloofar/pile/00.jsonl.zst",  split=f"{data_split}[:10000]")[key]
-    elif dataset == 'the_pile' and data_split=='test':
-        print("test")
-        data = datasets.load_dataset("json", data_files="/trunk/datasets/niloofar/pile/test.jsonl.zst",split=f"train[:10000]")[key]
-    else:
-        data = datasets.load_dataset(dataset, split=f'train[:10000]', cache_dir=cache_dir)[key]
+        data= parse_pilecorpus('ArmelR/the-pile-splitted')
+        # data = datasets.load_dataset("json", data_files="/trunk/datasets/niloofar/pile/00.jsonl.zst",  split=f"{data_split}[:10000]")[key]
+    # elif dataset == 'the_pile' and data_split=='test':
+    #     print("test")
+    #     data = datasets.load_dataset("json", data_files="/trunk/datasets/niloofar/pile/test.jsonl.zst",split=f"train[:10000]")[key]
+    # else:
+    #     data = datasets.load_dataset(dataset, split=f'train[:10000]', cache_dir=cache_dir)[key]
 
     # get unique examples, strip whitespace, and remove newlines
     # then take just the long examples, shuffle, take the first 5,000 to tokenize to save time
@@ -724,7 +764,7 @@ def generate_data(dataset,key,train=True):
     # then generate n_samples samples
 
     # remove duplicates from the data
-    data = list(dict.fromkeys(data))  # deterministic, as opposed to set()
+    # data = list(dict.fromkeys(data))  # deterministic, as opposed to set()
 
     # strip whitespace around each example
     data = [x.strip() for x in data]
