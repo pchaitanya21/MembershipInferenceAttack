@@ -1,0 +1,10 @@
+torch
+transformers==4.39
+numpy==1.25
+tqdm
+zstandard
+datasets
+bitsandbytes
+accelerate
+stanza
+pandas
