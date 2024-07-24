@@ -744,6 +744,8 @@ def generate_data(dataset,key,train=True):
     data_split = 'train' if train else 'test'
     if dataset =='swa':
         data= parse_swahili('swa_sample.txt')
+    elif dataset =='swa-new':
+        data= parse_swahili('swa_complex.txt')
     elif dataset == 'eng':
         #data_files = "https://www.cs.cmu.edu/~enron/enron_mail_20150507.tar.gz"
         #data_files="/home/niloofar/projects/enron_mail_20150507.tar.gz"
