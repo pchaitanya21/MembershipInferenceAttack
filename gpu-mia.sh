@@ -29,7 +29,7 @@ conda activate mia-n
 
 pip install -r requirements.txt
 # Run the main script
-python run_mia_unified.py --output_name unified_mia --base_model_name EleutherAI/pythia-2.8b --mask_filling_model_name t5-3b --n_perturbation_list 25 --n_samples 2000 --pct_words_masked 0.3 --span_length 2 --cache_dir cache --dataset_member the_pile --dataset_member_key text --dataset_nonmember xsum --ref_model gpt2-xl  --max_length 2000
+python run_mia_unified.py --output_name unified_mia --base_model_name EleutherAI/pythia-2.8b --mask_filling_model_name t5-3b --n_perturbation_list 25 --n_samples 2000 --pct_words_masked 0.3 --span_length 2 --cache_dir cache --dataset_member swa --dataset_member_key text --dataset_nonmember swa-new --ref_model gpt2-xl  --max_length 2000
 #python main.py --N 1000 --batch-size 10 --model1 EleutherAI/pythia-2.8b --model2 EleutherAI/pythia-410m --cor
 
 conda deactivate 
