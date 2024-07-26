@@ -380,8 +380,9 @@ def get_entropy(text):
 
     with torch.no_grad():
         
-        tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
-
+        # tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
+        tokenized = base_tokenizer(text, return_tensors="pt")
+        tokenized = {k: v.to(DEVICE).long() for k, v in tokenized.items()} 
         logits = base_model(**tokenized).logits[:,:-1]
         neg_entropy = F.softmax(logits, dim=-1) * F.log_softmax(logits, dim=-1)
         return -neg_entropy.sum(-1).mean().item()
