@@ -303,8 +303,8 @@ def get_ll(text):
             # tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
             tokenized = base_tokenizer(text, return_tensors="pt")
             tokenized = {k: v.to(DEVICE).long() for k, v in tokenized.items()}  # Ensure all tensors are LongTensor
-             
-            labels = tokenized.input_ids
+
+            labels = tokenized['input_ids']
             return -base_model(**tokenized, labels=labels).loss.item()
 
 
