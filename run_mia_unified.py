@@ -351,11 +351,12 @@ def get_rank(text, log=False):
     assert args.openai_model is None, "get_rank not implemented for OpenAI models"
 
     with torch.no_grad():
-        tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
-      
+        # tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
+        tokenized = base_tokenizer(text, return_tensors="pt")
+        tokenized = {k: v.to(DEVICE).long() for k, v in tokenized.items()} 
         logits = base_model(**tokenized).logits[:,:-1]
-        labels = tokenized.input_ids[:,1:]
-
+        # labels = tokenized.input_ids[:,1:]
+        labels = tokenized['input_ids'][:, 1:]
         # get rank of each label token in the model's likelihood ordering
         matches = (logits.argsort(-1, descending=True) == labels.unsqueeze(-1)).nonzero()
 
