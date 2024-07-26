@@ -323,10 +323,16 @@ def get_lira(text):
         return np.mean(logprobs)
     else:
         with torch.no_grad():
-            tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
-            labels = tokenized.input_ids
-            tokenized_ref = ref_tokenizer(text, return_tensors="pt").to(DEVICE)
-            labels_ref = tokenized_ref.input_ids
+            # tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
+            tokenized = base_tokenizer(text, return_tensors="pt")
+            tokenized = {k: v.to(DEVICE).long() for k, v in tokenized.items()}  # Ensure all tensors are LongTensor
+            # labels = tokenized.input_ids
+            labels = tokenized['input_ids']
+            # tokenized_ref = ref_tokenizer(text, return_tensors="pt").to(DEVICE)
+            tokenized_ref = ref_tokenizer(text, return_tensors="pt")
+            tokenized_ref = {k: v.to(DEVICE).long() for k, v in tokenized_ref.items()} 
+            # labels_ref = tokenized_ref.input_ids
+            labels_ref = tokenized_ref['input_ids']
             lls =  -base_model(**tokenized, labels=labels).loss.item()
             lls_ref = -ref_model(**tokenized_ref, labels=labels_ref).loss.item()
 
