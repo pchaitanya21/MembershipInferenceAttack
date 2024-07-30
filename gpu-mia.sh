@@ -2,8 +2,8 @@
 
 # Use the variable for the job name and log/error files
 #$ -N pythia-neighbourhood-mia
-#$ -o /exports/eddie/scratch/s2605274/job_runs/EDDIE-pythia-mia_$JOB_ID.log
-#$ -e /exports/eddie/scratch/s2605274/job_runs/EDDIE-pythia-mia_$JOB_ID.err
+#$ -o /exports/eddie/scratch/s2605274/job_runs/EDDIE-pythia-2.8b_$JOB_ID.log
+#$ -e /exports/eddie/scratch/s2605274/job_runs/EDDIE-pythia-2.8b_$JOB_ID.err
 #$ -cwd
 #$ -P lel_hcrc_cstr_students
 #$ -q gpu
@@ -12,6 +12,7 @@
 #$ -l h_rt=24:00:00
 #$ -m bea -M s2605274@ed.ac.uk 
 
+#Make sure these are in your eddie scratch space
 export HF_HOME="/exports/eddie/scratch/s2605274/.cache/huggingface_cache"
 export TRANSFORMERS_CACHE="/exports/eddie/scratch/s2605274/.cache/huggingface_cache/transformers"
 export HF_DATASETS_CACHE="/exports/eddie/scratch/s2605274/.cache/huggingface_cache/datasets"
