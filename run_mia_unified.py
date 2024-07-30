@@ -336,7 +336,7 @@ def get_ll(text):
 #             lls =  -base_model(**tokenized, labels=labels).loss.item()
 #             lls_ref = -ref_model(**tokenized_ref, labels=labels_ref).loss.item()
 
-#             return lls - lls_ref
+            return lls - lls_ref
 def get_lira(text):
     if args.openai_model:
         # Placeholder for non-implemented OpenAI model handling
@@ -1148,9 +1148,12 @@ if __name__ == '__main__':
         if args.openai_model is None:
             rank_criterion = lambda text: -get_rank(text, log=False)
             baseline_outputs.append(run_baseline_threshold_experiment(rank_criterion, "rank", n_samples=n_samples))
+            print("running the baseline")
             logrank_criterion = lambda text: -get_rank(text, log=True)
+            print("running the logrank_criterion")
             baseline_outputs.append(run_baseline_threshold_experiment(logrank_criterion, "log_rank", n_samples=n_samples))
             entropy_criterion = lambda text: get_entropy(text)
+            print("entropy criterion")
             baseline_outputs.append(run_baseline_threshold_experiment(entropy_criterion, "entropy", n_samples=n_samples))
             # if args.ref_model is not None:
             #     baseline_outputs.append(run_baseline_threshold_experiment(get_lira, "lr_ratio", n_samples=n_samples))
