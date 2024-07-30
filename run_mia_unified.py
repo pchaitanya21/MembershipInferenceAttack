@@ -309,12 +309,49 @@ def get_ll(text):
 
 
 # Get the  likelihood ratio of each text under the base_model -- MIA baseline
+# def get_lira(text):
+#     if args.openai_model: 
+#         print("NOT IMPLEMENTED")
+#         exit(0)       
+#         kwargs = { "engine": args.openai_model, "temperature": 0, "max_tokens": 0, "echo": True, "logprobs": 0}
+#         r = openai.Completion.create(prompt=f"<|endoftext|>{text}", **kwargs)
+#         result = r['choices'][0]
+#         tokens, logprobs = result["logprobs"]["tokens"][1:], result["logprobs"]["token_logprobs"][1:]
+
+#         assert len(tokens) == len(logprobs), f"Expected {len(tokens)} logprobs, got {len(logprobs)}"
+
+#         return np.mean(logprobs)
+#     else:
+#         with torch.no_grad():
+#             # tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
+#             tokenized = base_tokenizer(text, return_tensors="pt")
+#             tokenized = {k: v.to(DEVICE).long() for k, v in tokenized.items()}  # Ensure all tensors are LongTensor
+#             # labels = tokenized.input_ids
+#             labels = tokenized['input_ids']
+#             # tokenized_ref = ref_tokenizer(text, return_tensors="pt").to(DEVICE)
+#             tokenized_ref = ref_tokenizer(text, return_tensors="pt")
+#             tokenized_ref = {k: v.to(DEVICE).long() for k, v in tokenized_ref.items()} 
+#             # labels_ref = tokenized_ref.input_ids
+#             labels_ref = tokenized_ref['input_ids']
+#             lls =  -base_model(**tokenized, labels=labels).loss.item()
+#             lls_ref = -ref_model(**tokenized_ref, labels=labels_ref).loss.item()
+
+#             return lls - lls_ref
 def get_lira(text):
-    if args.openai_model: 
-        print("NOT IMPLEMENTED")
-        exit(0)       
-        kwargs = { "engine": args.openai_model, "temperature": 0, "max_tokens": 0, "echo": True, "logprobs": 0}
-        r = openai.Completion.create(prompt=f"<|endoftext|>{text}", **kwargs)
+    if args.openai_model:
+        # Placeholder for non-implemented OpenAI model handling
+        print("OpenAI model handling not implemented.")
+        exit(0)  # Consider raising an exception instead of exiting if used in a larger application
+        
+        # Code for OpenAI model (currently unreachable due to exit(0))
+        kwargs = {
+            "engine": args.openai_model,
+            "temperature": 0,
+            "max_tokens": 0,
+            "echo": True,
+            "logprobs": 0
+        }
+        r = openai.Completion.create(prompt=f"{text}", **kwargs)
         result = r['choices'][0]
         tokens, logprobs = result["logprobs"]["tokens"][1:], result["logprobs"]["token_logprobs"][1:]
 
@@ -323,19 +360,33 @@ def get_lira(text):
         return np.mean(logprobs)
     else:
         with torch.no_grad():
-            # tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
+            # Check if the input text is empty
+            if not text.strip():
+                raise ValueError("Input text is empty. Please provide valid text.")
+
+            # Tokenize the input text for the base model
             tokenized = base_tokenizer(text, return_tensors="pt")
-            tokenized = {k: v.to(DEVICE).long() for k, v in tokenized.items()}  # Ensure all tensors are LongTensor
-            # labels = tokenized.input_ids
+            print(f"Tokenized (base) input_ids shape: {tokenized['input_ids'].shape}")
+
+            tokenized = {k: v.to(DEVICE).long() for k, v in tokenized.items()}
             labels = tokenized['input_ids']
-            # tokenized_ref = ref_tokenizer(text, return_tensors="pt").to(DEVICE)
+
+            # Tokenize the input text for the reference model
             tokenized_ref = ref_tokenizer(text, return_tensors="pt")
-            tokenized_ref = {k: v.to(DEVICE).long() for k, v in tokenized_ref.items()} 
-            # labels_ref = tokenized_ref.input_ids
+            print(f"Tokenized (ref) input_ids shape: {tokenized_ref['input_ids'].shape}")
+
+            tokenized_ref = {k: v.to(DEVICE).long() for k, v in tokenized_ref.items()}
             labels_ref = tokenized_ref['input_ids']
-            lls =  -base_model(**tokenized, labels=labels).loss.item()
+
+            # Ensure tensors are not empty
+            if labels.numel() == 0 or labels_ref.numel() == 0:
+                raise ValueError("Tokenization resulted in empty tensors. Check the input text and tokenizer.")
+
+            # Calculate log likelihoods for both models
+            lls = -base_model(**tokenized, labels=labels).loss.item()
             lls_ref = -ref_model(**tokenized_ref, labels=labels_ref).loss.item()
 
+            # Return the difference in log likelihoods
             return lls - lls_ref
 
 def get_lls(texts):
