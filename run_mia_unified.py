@@ -152,11 +152,14 @@ def perturb_texts_(texts, span_length, pct, ceil_pct=False):
         raw_fills = replace_masks(masked_texts)
         extracted_fills = extract_fills(raw_fills)
         perturbed_texts = apply_extracted_fills(masked_texts, extracted_fills)
+        print("The perturbed texts are: ", perturbed_texts)
+        print("The length of perturbed text is: ", len(perturbed_texts))
 
         # Handle the fact that sometimes the model doesn't generate the right number of fills and we have to try again
         attempts = 1
         while '' in perturbed_texts:
             idxs = [idx for idx, x in enumerate(perturbed_texts) if x == '']
+            print("The missing data is :", idxs)
             print(f'WARNING: {len(idxs)} texts have no fills. Trying again [attempt {attempts}].')
             masked_texts = [tokenize_and_mask(x, span_length, pct, ceil_pct) for idx, x in enumerate(texts) if idx in idxs]
             raw_fills = replace_masks(masked_texts)
