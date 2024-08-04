@@ -366,6 +366,17 @@ def get_lira(text):
             # Check if the input text is empty
             if not text.strip():
                 raise ValueError("Input text is empty. Please provide valid text.")
+            
+
+            #test if the tokeniser is working correctly 
+
+            # Test the tokenizer with sample text
+            text = "Hello world!"
+            encoded = base_tokenizer(text, return_tensors='pt')
+            print("CHECKING THE TOKENISER FOR THE MODEL************")
+            print("Token IDs:", encoded['input_ids'])
+            print("Decoded text:", base_tokenizer.decode(encoded['input_ids'][0]))
+
 
             # Tokenize the input text for the base model
             tokenized = base_tokenizer(text, return_tensors="pt")
